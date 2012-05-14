@@ -235,7 +235,8 @@ char    * QDECL va( char *format, ... ) {
 	index++;
 
 	va_start( argptr, format );
-	vsprintf( buf, format,argptr );
+	vsnprintf( buf, 32000, format,argptr ); // FIXME: magic value for size!
+	buf[31999] = '\0';
 	va_end( argptr );
 
 	return buf;

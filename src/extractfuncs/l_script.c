@@ -239,7 +239,8 @@ void QDECL ScriptError( script_t *script, char *str, ... ) {
 	}
 
 	va_start( ap, str );
-	vsprintf( text, str, ap );
+	vsnprintf( text, sizeof(text), str, ap );
+	text[1023] = '\0';
 	va_end( ap );
 #ifdef BOTLIB
 	botimport.Print( PRT_ERROR, "file %s, line %d: %s\n", script->filename, script->line, text );
@@ -266,7 +267,8 @@ void QDECL ScriptWarning( script_t *script, char *str, ... ) {
 	}
 
 	va_start( ap, str );
-	vsprintf( text, str, ap );
+	vsnprintf( text, sizeof(text), str, ap );
+	text[1023] = '\0';
 	va_end( ap );
 #ifdef BOTLIB
 	botimport.Print( PRT_WARNING, "file %s, line %d: %s\n", script->filename, script->line, text );

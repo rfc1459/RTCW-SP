@@ -660,7 +660,8 @@ void QDECL NET_OutOfBandPrint( netsrc_t sock, netadr_t adr, const char *format, 
 	string[3] = -1;
 
 	va_start( argptr, format );
-	vsprintf( string + 4, format, argptr );
+	vsnprintf( string + 4, sizeof(string) - 4, format, argptr );
+	string[MAX_MSGLEN-1] = '\0';
 	va_end( argptr );
 
 	// send the datagram

@@ -438,7 +438,8 @@ void idStr::snprintf
 	va_list argptr;
 
 	va_start( argptr,fmt );
-	len = vsprintf( buffer,fmt,argptr );
+	len = vsnprintf( buffer,sizeof(buffer),fmt,argptr );
+	buffer[0xffff] = '\0';
 	va_end( argptr );
 
 	assert( len < size );

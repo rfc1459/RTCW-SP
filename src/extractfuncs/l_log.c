@@ -120,7 +120,8 @@ void Log_Print( char *fmt, ... ) {
 	if ( verbose ) {
 		va_start( ap, fmt );
 #ifdef WINBSPC
-		vsprintf( buf, fmt, ap );
+		vsnprintf( buf, sizeof(buf), fmt, ap );
+		buf[2047] = '\0';
 		WinBSPCPrint( buf );
 #else
 		vprintf( fmt, ap );

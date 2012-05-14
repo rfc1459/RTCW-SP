@@ -71,7 +71,8 @@ void AAS_Error( char *fmt, ... ) {
 	char text[1024];
 
 	va_start( argptr, fmt );
-	vsprintf( text, fmt, argptr );
+	vsnprintf( text, sizeof(text), fmt, argptr );
+	text[1023] = '\0';
 	va_end( argptr );
 
 	Error( text );
@@ -164,7 +165,8 @@ void BotImport_Print( int type, char *fmt, ... ) {
 	char buf[1024];
 
 	va_start( argptr, fmt );
-	vsprintf( buf, fmt, argptr );
+	vsnprintf( buf, sizeof(buf), fmt, argptr );
+	buf[1023] = '\0';
 	printf( buf );
 	if ( buf[0] != '\r' ) {
 		Log_Write( buf );
@@ -216,7 +218,8 @@ void Com_DPrintf( char *fmt, ... ) {
 	char buf[1024];
 
 	va_start( argptr, fmt );
-	vsprintf( buf, fmt, argptr );
+	vsnprintf( buf, sizeof(buf), fmt, argptr );
+	buf[1023] = '\0';
 	printf( buf );
 	if ( buf[0] != '\r' ) {
 		Log_Write( buf );

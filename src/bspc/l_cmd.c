@@ -143,7 +143,8 @@ void Error( char *error, ... ) {
 	err = GetLastError();
 
 	va_start( argptr, error );
-	vsprintf( text, error, argptr );
+	vsnprintf( text, sizeof(text), error, argptr );
+	text[1023] = '\0';
 	va_end( argptr );
 
 	sprintf( text2, "%s\nGetLastError() = %i", text, err );
@@ -160,7 +161,8 @@ void Warning( char *szFormat, ... ) {
 	va_list argptr;
 
 	va_start( argptr, szFormat );
-	vsprintf( szBuffer, szFormat, argptr );
+	vsnprintf( szBuffer, sizeof(szBuffer), szFormat, argptr );
+	szBuffer[255] = '\0';
 	va_end( argptr );
 
 	MessageBox( program_hwnd, szBuffer, "Warning", MB_OK );
@@ -182,7 +184,8 @@ void Error( char *error, ... ) {
 	char text[1024];
 
 	va_start( argptr, error );
-	vsprintf( text, error, argptr );
+	vsnprintf( text, sizeof(text), error, argptr );
+	text[1023] = '\0';
 	va_end( argptr );
 	printf( "ERROR: %s\n", text );
 
@@ -197,7 +200,8 @@ void Warning( char *warning, ... ) {
 	char text[1024];
 
 	va_start( argptr, warning );
-	vsprintf( text, warning, argptr );
+	vsnprintf( text, sizeof(text), warning, argptr );
+	text[1023] = '\0';
 	va_end( argptr );
 	printf( "WARNING: %s\n", text );
 
@@ -221,7 +225,8 @@ void qprintf( char *format, ... ) {
 
 	va_start( argptr,format );
 #ifdef WINBSPC
-	vsprintf( buf, format, argptr );
+	vsnprintf( buf, sizeof(buf), format, argptr );
+	buf[2047] = '\0';
 	WinBSPCPrint( buf );
 #else
 	vprintf( format, argptr );
@@ -234,7 +239,8 @@ void Com_Error( int level, char *error, ... ) {
 	char text[1024];
 
 	va_start( argptr, error );
-	vsprintf( text, error, argptr );
+	vsnprintf( text, sizeof(text), error, argptr );
+	text[1023] = '\0';
 	va_end( argptr );
 	Error( text );
 } //end of the funcion Com_Error
@@ -244,7 +250,8 @@ void Com_Printf( const char *fmt, ... ) {
 	char text[1024];
 
 	va_start( argptr, fmt );
-	vsprintf( text, fmt, argptr );
+	vsnprintf( text, sizeof(text), fmt, argptr );
+	text[1023] = '\0';
 	va_end( argptr );
 	Log_Print( text );
 } //end of the funcion Com_Printf

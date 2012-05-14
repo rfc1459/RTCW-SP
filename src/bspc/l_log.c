@@ -135,7 +135,8 @@ void Log_Print( char *fmt, ... ) {
 	char buf[2048];
 
 	va_start( ap, fmt );
-	vsprintf( buf, fmt, ap );
+	vsnprintf( buf, sizeof(buf), fmt, ap );
+	buf[2047] = '\0';
 	va_end( ap );
 
 	if ( verbose ) {
@@ -166,7 +167,8 @@ void Log_Write( char *fmt, ... ) {
 		return;
 	}
 	va_start( ap, fmt );
-	vsprintf( buf, fmt, ap );
+	vsnprintf( buf, sizeof(buf), fmt, ap );
+	buf[2047] = '\0';
 	va_end( ap );
 	Log_UnifyEndOfLine( buf );
 	fprintf( logfile.fp, "%s", buf );

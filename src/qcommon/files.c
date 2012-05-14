@@ -1518,7 +1518,8 @@ void QDECL FS_Printf( fileHandle_t h, const char *fmt, ... ) {
 	char msg[MAXPRINTMSG];
 
 	va_start( argptr,fmt );
-	vsprintf( msg,fmt,argptr );
+	vsnprintf( msg,sizeof(msg),fmt,argptr );
+	msg[MAXPRINTMSG-1] = '\0';
 	va_end( argptr );
 
 	FS_Write( msg, strlen( msg ), h );
