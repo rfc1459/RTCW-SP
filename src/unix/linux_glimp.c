@@ -129,6 +129,11 @@ static int vidmode_MajorVersion = 0, vidmode_MinorVersion = 0; // major and mino
 
 // gamma value of the X display before we start playing with it
 static XF86VidModeGamma vidmode_InitialGamma;
+// In case someone is using a custom gamma ramp (like me)
+static int vidmode_GammaRampSize;
+static unsigned short *vidmode_GammaRampRed;
+static unsigned short *vidmode_GammaRampGreen;
+static unsigned short *vidmode_GammaRampBlue;
 
 static int win_x, win_y;
 
@@ -765,6 +770,10 @@ void GLimp_Shutdown( void ) {
 		}
 		if ( glConfig.deviceSupportsGamma ) {
 			XF86VidModeSetGamma( dpy, scrnum, &vidmode_InitialGamma );
+			XF86VidModeSetGammaRamp( dpy, scrnum, vidmode_GammaRampSize, vidmode_GammaRampRed, vidmode_GammaRampGreen, vidmode_GammaRampBlue );
+			free( vidmode_GammaRampRed );
+			free( vidmode_GammaRampGreen );
+			free( vidmode_GammaRampBlue );
 		}
 		// NOTE TTimo opening/closing the display should be necessary only once per run
 		//   but it seems QGL_Shutdown gets called in a lot of occasion
@@ -1254,6 +1263,11 @@ static void GLW_InitGamma() {
 			return;
 		}
 		XF86VidModeGetGamma( dpy, scrnum, &vidmode_InitialGamma );
+		XF86VidModeGetGammaRampSize( dpy, scrnum, &vidmode_GammaRampSize );
+		vidmode_GammaRampRed = (unsigned short *)calloc( vidmode_GammaRampSize, sizeof(unsigned short) );
+		vidmode_GammaRampGreen = (unsigned short *)calloc( vidmode_GammaRampSize, sizeof(unsigned short) );
+		vidmode_GammaRampBlue = (unsigned short *)calloc( vidmode_GammaRampSize, sizeof(unsigned short) );
+		XF86VidModeGetGammaRamp( dpy, scrnum, vidmode_GammaRampSize, vidmode_GammaRampRed, vidmode_GammaRampGreen, vidmode_GammaRampBlue );
 		ri.Printf( PRINT_ALL, "XF86 Gamma extension initialized\n" );
 		glConfig.deviceSupportsGamma = qtrue;
 	}
