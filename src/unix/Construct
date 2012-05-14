@@ -35,7 +35,7 @@ if ($cpu +~ /i?86/)
 $OS = `uname`;
 chop ($OS);
 # libc .. do the little magic!
-$libc_cmd = '/lib/libc.so.6 |grep "GNU C "|grep version|awk -F "version " \'{ print $2 }\'|cut -b -3';
+$libc_cmd = '/lib/i386-linux-gnu/libc.so.6 |grep "GNU C "|grep version|awk -F "version " \'{ print $2 }\'|cut -b -3';
 $libc = `$libc_cmd`;
 chop ($libc);
 
