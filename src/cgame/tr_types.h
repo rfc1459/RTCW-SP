@@ -280,7 +280,7 @@ typedef struct {
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
-	char extensions_string[4 * MAX_STRING_CHARS];                       // this is actually too short for many current cards/drivers  // (SA) doubled from 2x to 4x MAX_STRING_CHARS
+	char *extensions_string;                        // Dynamically allocated since GL_EXTENSIONS can have a (possibly) indefinite length
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability

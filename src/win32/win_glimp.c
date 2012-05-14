@@ -1322,6 +1322,8 @@ void GLimp_Init( void ) {
 	char buf[1024];
 	cvar_t *lastValidRenderer = ri.Cvar_Get( "r_lastValidRenderer", "(uninitialized)", CVAR_ARCHIVE );
 	cvar_t  *cv;
+	char *extString;
+	size_t len;
 
 	ri.Printf( PRINT_ALL, "Initializing OpenGL subsystem\n" );
 
@@ -1349,7 +1351,13 @@ void GLimp_Init( void ) {
 	Q_strncpyz( glConfig.vendor_string, qglGetString( GL_VENDOR ), sizeof( glConfig.vendor_string ) );
 	Q_strncpyz( glConfig.renderer_string, qglGetString( GL_RENDERER ), sizeof( glConfig.renderer_string ) );
 	Q_strncpyz( glConfig.version_string, qglGetString( GL_VERSION ), sizeof( glConfig.version_string ) );
-	Q_strncpyz( glConfig.extensions_string, qglGetString( GL_EXTENSIONS ), sizeof( glConfig.extensions_string ) );
+	extString = (char *)qglGetString( GL_EXTENSIONS );
+	if ( extString == NULL ) {
+		ri.Error( ERR_FATAL, "GLimp_Init() - GL_EXTENSIONS is NULL\n" );
+	}
+	len = strlen( extString );
+	glConfig.extensions_string = (char *)malloc( len + 1 );
+	Q_strncpyz( glConfig.extensions_string, extString, len + 1 );
 
 	//
 	// chipset specific configuration
@@ -1484,6 +1492,11 @@ void GLimp_Shutdown( void ) {
 
 	// shutdown QGL subsystem
 	QGL_Shutdown();
+
+	// release the extensions string
+	if ( glConfig.extensions_string != NULL ) {
+		free( glConfig.extensions_string );
+	}
 
 	memset( &glConfig, 0, sizeof( glConfig ) );
 	memset( &glState, 0, sizeof( glState ) );

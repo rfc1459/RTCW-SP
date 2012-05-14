@@ -777,6 +777,11 @@ void GLimp_Shutdown( void ) {
 	win = 0;
 	ctx = NULL;
 
+	// release the extensions string
+	if ( glConfig.extensions_string != NULL ) {
+		free( glConfig.extensions_string );
+	}
+
 	memset( &glConfig, 0, sizeof( glConfig ) );
 	memset( &glState, 0, sizeof( glState ) );
 
@@ -1330,6 +1335,8 @@ void GLimp_Init( void ) {
 	char buf[1024];
 	cvar_t *lastValidRenderer = ri.Cvar_Get( "r_lastValidRenderer", "(uninitialized)", CVAR_ARCHIVE );
 	// cvar_t	*cv; // bk001204 - unused
+	char *extString;
+	size_t len;
 
 	r_allowSoftwareGL = ri.Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
 
@@ -1400,7 +1407,13 @@ void GLimp_Init( void ) {
 		glConfig.renderer_string[strlen( glConfig.renderer_string ) - 1] = 0;
 	}
 	Q_strncpyz( glConfig.version_string, qglGetString( GL_VERSION ), sizeof( glConfig.version_string ) );
-	Q_strncpyz( glConfig.extensions_string, qglGetString( GL_EXTENSIONS ), sizeof( glConfig.extensions_string ) );
+	extString = (char *)qglGetString( GL_EXTENSIONS );
+	if ( extString == NULL ) {
+		ri.Error( ERR_FATAL, "GLimp_Init() - GL_EXTENSIONS is NULL\n" );
+	}
+	len = strlen( extString );
+	glConfig.extensions_string = (char *)malloc( len + 1 );
+	Q_strncpyz( glConfig.extensions_string, extString, len + 1 );
 
 	//
 	// chipset specific configuration

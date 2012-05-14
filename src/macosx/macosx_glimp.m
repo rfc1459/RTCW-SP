@@ -449,6 +449,8 @@ void GLimp_Init( void ) {
 	static BOOL addedCommands = NO;
 	cvar_t *lastValidRenderer = ri.Cvar_Get( "r_lastValidRenderer", "(uninitialized)", CVAR_ARCHIVE );
 	char *buf;
+	const char *extString;
+	int len;
 
 	if ( !addedCommands ) {
 		addedCommands = YES;
@@ -502,7 +504,13 @@ void GLimp_Init( void ) {
 	Q_strncpyz( glConfig.vendor_string, (const char *)qglGetString( GL_VENDOR ), sizeof( glConfig.vendor_string ) );
 	Q_strncpyz( glConfig.renderer_string, (const char *)qglGetString( GL_RENDERER ), sizeof( glConfig.renderer_string ) );
 	Q_strncpyz( glConfig.version_string, (const char *)qglGetString( GL_VERSION ), sizeof( glConfig.version_string ) );
-	Q_strncpyz( glConfig.extensions_string, (const char *)qglGetString( GL_EXTENSIONS ), sizeof( glConfig.extensions_string ) );
+	extString = (const char *)qglGetString( GL_EXTENSIONS );
+	if ( extString == NULL ) {
+		ri.Error( ERR_FATAL, "GLimp_Init() - GL_EXTENSIONS is NULL\n" );
+	}
+	len = strlen(extString);
+	glConfig.extensions_string = (char *)malloc( len + 1 );
+	Q_strncpyz( glConfig.extensions_string, extString, len + 1 );
 
 	//
 	// chipset specific configuration
@@ -649,6 +657,11 @@ void GLimp_Shutdown( void ) {
 		free( glw_state.inGameTable.red );
 		free( glw_state.inGameTable.blue );
 		free( glw_state.inGameTable.green );
+	}
+
+	// release the extensions string
+	if ( glConfig.extensions_string != NULL ) {
+		free( glConfig.extensions_string );
 	}
 
 	memset( &glConfig, 0, sizeof( glConfig ) );
